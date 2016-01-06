@@ -196,8 +196,9 @@ def _scan_insert_from_select_cols(
     if add_select_cols:
         values.extend(add_select_cols)
         compiler._insert_from_select = compiler._insert_from_select._generate()
-        compiler._insert_from_select._raw_columns += tuple(
-            expr for col, expr in add_select_cols)
+        compiler._insert_from_select._raw_columns = \
+            tuple(compiler._insert_from_select._raw_columns) + tuple(
+                expr for col, expr in add_select_cols)
 
 
 def _scan_cols(
@@ -492,6 +493,7 @@ def _append_param_update(
         else:
             compiler.postfetch.append(c)
     elif implicit_return_defaults and \
+            stmt._return_defaults is not True and \
             c in implicit_return_defaults:
         compiler.returning.append(c)
 

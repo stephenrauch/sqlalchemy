@@ -16,7 +16,111 @@
         :start-line: 5
 
 .. changelog::
+    :version: 1.0.11
+
+    .. change::
+        :tags: bug, ext
+        :tickets: 3605
+        :versions: 1.1.0b1
+
+        Further fixes to :ticket:`3605`, pop method on :class:`.MutableDict`,
+        where the "default" argument was not included.
+
+    .. change::
+        :tags: bug, ext
+        :tickets: 3612
+        :versions: 1.1.0b1
+
+        Fixed bug in baked loader system where the systemwide monkeypatch
+        for setting up baked lazy loaders would interfere with other
+        loader strategies that rely on lazy loading as a fallback, e.g.
+        joined and subquery eager loaders, leading to ``IndexError``
+        exceptions at mapper configuration time.
+
+    .. change::
+        :tags: bug, orm
+        :tickets: 3611
+        :versions: 1.1.0b1
+
+        Fixed regression caused in 1.0.10 by the fix for :ticket:`3593` where
+        the check added for a polymorphic joinedload from a
+        poly_subclass->class->poly_baseclass connection would fail for the
+        scenario of class->poly_subclass->class.
+
+    .. change::
+        :tags: bug, orm
+        :tickets: 3610
+        :versions: 1.1.0b1
+
+        Fixed bug where :meth:`.Session.bulk_update_mappings` and related
+        would not bump a version id counter when in use.  The experience
+        here is still a little rough as the original version id is required
+        in the given dictionaries and there's not clean error reporting
+        on that yet.
+
+    .. change::
+        :tags: bug, sql
+        :tickets: 3609
+        :versions: 1.1.0b1
+
+        Fixed bug in :meth:`.Update.return_defaults` which would cause all
+        insert-default holding columns not otherwise included in the SET
+        clause (such as primary key cols) to get rendered into the RETURNING
+        even though this is an UPDATE.
+
+    .. change::
+        :tags: bug, orm
+        :tickets: 3609
+        :versions: 1.1.0b1
+
+        Major fixes to the :paramref:`.Mapper.eager_defaults` flag, this
+        flag would not be honored correctly in the case that multiple
+        UPDATE statements were to be emitted, either as part of a flush
+        or a bulk update operation.  Additionally, RETURNING
+        would be emitted unnecessarily within update statements.
+
+    .. change::
+        :tags: bug, orm
+        :tickets: 3606
+        :versions: 1.1.0b1
+
+        Fixed bug where use of the :meth:`.Query.select_from` method would
+        cause a subsequent call to the :meth:`.Query.with_parent` method to
+        fail.
+
+.. changelog::
     :version: 1.0.10
+    :released: December 11, 2015
+
+    .. change::
+        :tags: bug, ext
+        :tickets: 3605
+        :versions: 1.1.0b1
+
+        Added support for the ``dict.pop()`` and ``dict.popitem()`` methods
+        to the :class:`.mutable.MutableDict` class.
+
+    .. change::
+        :tags: change, tests
+        :versions: 1.1.0b1
+
+        The ORM and Core tutorials, which have always been in doctest format,
+        are now exercised within the normal unit test suite in both Python
+        2 and Python 3.
+
+    .. change::
+        :tags: bug, sql
+        :tickets: 3603
+        :versions: 1.1.0b1
+
+        Fixed issue within the :meth:`.Insert.from_select` construct whereby
+        the :class:`.Select` construct would have its ``._raw_columns``
+        collection mutated in-place when compiling the :class:`.Insert`
+        construct, when the target :class:`.Table` has Python-side defaults.
+        The :class:`.Select` construct would compile standalone with the
+        erroneous column present subsequent to compilation of the
+        :class:`.Insert`, and the the :class:`.Insert` statement itself would
+        fail on a second compile attempt due to duplicate bound parameters.
 
     .. change::
         :tags: bug, mysql
